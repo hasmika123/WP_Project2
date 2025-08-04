@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Dashboard - Fifteen Puzzle</title>
+    <link rel="stylesheet" href="fifteen.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(113, 179, 7, 0.3);
+        }
+
+        .dashboard-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .dashboard-header p {
+            margin: 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(113, 179, 7, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--green-light);
+        }
+
+        .card-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--green-darker);
+            margin: 0;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--green-primary);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-top: 5px;
+        }
+
+        .recent-games {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .game-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .game-item:last-child {
+            border-bottom: none;
+        }
+
+        .game-info {
+            flex: 1;
+        }
+
+        .game-date {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .game-result {
+            font-weight: 600;
+            color: var(--green-dark);
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--green-primary);
+        }
+
+        .achievement-icon {
+            font-size: 24px;
+        }
+
+        .achievement-info h4 {
+            margin: 0 0 5px 0;
+            color: var(--green-darker);
+            font-size: 1rem;
+        }
+
+        .achievement-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-dashboard {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary-dashboard {
+            background: linear-gradient(135deg, var(--green-primary), var(--green-dark));
+            color: white;
+        }
+
+        .btn-secondary-dashboard {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green-primary), var(--green-light));
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 15px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Admin-only menu items - hidden by default for non-admin users */
+        .admin-only {
+            display: block;
+        }
+
+        .user-role-player .admin-only {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-brand">
+                <h1 class="brand-title">Fifteen Puzzle</h1>
+                <span class="brand-subtitle">Player Dashboard</span>
+            </div>
+            
+            <!-- User Auth -->
+            <div class="header-actions">
+                <div id="userPanel" class="auth-user">
+                    <div class="user-menu">
+                        <button class="user-avatar" id="userMenuToggle">
+                            <span id="userInitials">U</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-info">
+                                <div class="user-name" id="userName">User</div>
+                                <div class="user-role" id="userRole">Player</div>
+                            </div>
+                            <button class="dropdown-item admin-only" id="adminDashboardItem">
+                                <span class="item-icon">🛠️</span>
+                                Admin Dashboard
+                            </button>
+                            <button class="dropdown-item" onclick="window.location.href='dashboard.html'">
+                                <span class="item-icon">📋</span>
+                                Player Dashboard
+                            </button>
+                            <button class="dropdown-item" onclick="window.location.href='fifteen.html'">
+                                <span class="item-icon">🎮</span>
+                                Play Game
+                            </button>
+                            <hr class="dropdown-divider">
+                            <button class="dropdown-item" id="logoutButton">
+                                <span class="item-icon">🚪</span>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Welcome back, <span id="welcomeUserName">Player</span>!</h1>
+            <p>Track your progress and improve your puzzle-solving skills</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Game Statistics -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <h2 class="card-title">Game Statistics</h2>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalGames">0</span>
+                        <div class="stat-label">Total Games</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="gamesWon">0</span>
+                        <div class="stat-label">Games Won</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="bestTime">--</span>
+                        <div class="stat-label">Best Time</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="avgMoves">--</span>
+                        <div class="stat-label">Avg Moves</div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-dashboard btn-primary-dashboard" onclick="window.location.href='fifteen.html'">
+                        🎮 Play Now
+                    </button>
+                    <button class="btn-dashboard btn-secondary-dashboard" onclick="showDetailedStats()">
+                        📈 View Details
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Games -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <h2 class="card-title">Recent Games</h2>
+                </div>
+                <ul class="recent-games" id="recentGamesList">
+                    <li class="game-item">
+                        <div class="game-info">
+                            <div class="game-result">Won in 45 moves</div>
+                            <div class="game-date">2 hours ago</div>
+                        </div>
+                        <div class="game-time">2:34</div>
+                    </li>
+                    <li class="game-item">
+                        <div class="game-info">
+                            <div class="game-result">Won in 52 moves</div>
+                            <div class="game-date">Yesterday</div>
+                        </div>
+                        <div class="game-time">3:12</div>
+                    </li>
+                    <li class="game-item">
+                        <div class="game-info">
+                            <div class="game-result">Won in 38 moves</div>
+                            <div class="game-date">2 days ago</div>
+                        </div>
+                        <div class="game-time">1:58</div>
+                    </li>
+                </ul>
+                <div class="action-buttons">
+                    <button class="btn-dashboard btn-secondary-dashboard" onclick="showGameHistory()">
+                        📋 Full History
+                    </button>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">🏆</div>
+                    <h2 class="card-title">Recent Achievements</h2>
+                </div>
+                <div id="achievementsList">
+                    <div class="achievement-item">
+                        <div class="achievement-icon">🎯</div>
+                        <div class="achievement-info">
+                            <h4>First Victory</h4>
+                            <p>Completed your first puzzle!</p>
+                        </div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-icon">⚡</div>
+                        <div class="achievement-info">
+                            <h4>Speed Demon</h4>
+                            <p>Solved a puzzle in under 2 minutes</p>
+                        </div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-icon">💯</div>
+                        <div class="achievement-info">
+                            <h4>Efficient Solver</h4>
+                            <p>Solved with less than 40 moves</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-dashboard btn-secondary-dashboard" onclick="showAllAchievements()">
+                        🎖️ View All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Tracking -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <h2 class="card-title">Progress Tracking</h2>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Games this week</span>
+                        <span id="weeklyProgress">7/10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 70%"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Win streak</span>
+                        <span id="winStreak">5 games</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 50%"></div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-dashboard btn-primary-dashboard" onclick="window.location.href='fifteen.html'">
+                        🚀 Continue Playing
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="fifteen.html" class="btn-dashboard btn-primary-dashboard" style="display: inline-flex; padding: 15px 30px;">
+                ← Back to Game
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserData();
+            loadGameStats();
+            setupEventListeners();
+        });
+
+        function loadUserData() {
+            const currentUser = JSON.parse(localStorage.getItem('fifteenPuzzleCurrentUser') || '{}');
+            if (currentUser.username) {
+                document.getElementById('userName').textContent = currentUser.username;
+                document.getElementById('userRole').textContent = currentUser.role || 'Player';
+                document.getElementById('userInitials').textContent = currentUser.username.charAt(0).toUpperCase();
+                document.getElementById('welcomeUserName').textContent = currentUser.username;
+                
+                // Apply role-based menu visibility
+                const userRole = currentUser.role || 'Player';
+                if (userRole.toLowerCase() !== 'administrator' && userRole.toLowerCase() !== 'admin') {
+                    document.body.classList.add('user-role-player');
+                }
+            }
+        }
+
+        function loadGameStats() {
+            // Load stats from localStorage
+            const stats = JSON.parse(localStorage.getItem('fifteenPuzzlePlayerStats') || '{}');
+            
+            document.getElementById('totalGames').textContent = stats.totalGames || 0;
+            document.getElementById('gamesWon').textContent = stats.gamesWon || 0;
+            document.getElementById('bestTime').textContent = stats.bestTime || '--';
+            document.getElementById('avgMoves').textContent = stats.avgMoves || '--';
+        }
+
+        function setupEventListeners() {
+            // User dropdown functionality
+            const userMenuToggle = document.getElementById('userMenuToggle');
+            const userDropdown = document.getElementById('userDropdown');
+
+            userMenuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function() {
+                userDropdown.classList.remove('show');
+            });
+
+            // Logout functionality
+            document.getElementById('logoutButton').addEventListener('click', function() {
+                localStorage.removeItem('fifteenPuzzleCurrentUser');
+                window.location.href = 'fifteen.html';
+            });
+
+            // Admin Dashboard navigation
+            const adminDashboardItem = document.getElementById('adminDashboardItem');
+            if (adminDashboardItem) {
+                adminDashboardItem.addEventListener('click', function() {
+                    window.location.href = 'admin.html';
+                });
+            }
+        }
+
+        function showDetailedStats() {
+            alert('Detailed statistics view would open here. This would show charts and graphs of performance over time.');
+        }
+
+        function showGameHistory() {
+            alert('Full game history would open here. This would show all games played with filters and sorting options.');
+        }
+
+        function showAllAchievements() {
+            alert('All achievements view would open here. This would show a complete list of achievements with progress bars.');
+        }
+    </script>
+</body>
+</html>

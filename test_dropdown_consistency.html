@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role-Based Dropdown Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .test-btn:hover {
+            background: #0056b3;
+        }
+        .admin-btn {
+            background: #28a745;
+        }
+        .admin-btn:hover {
+            background: #1e7e34;
+        }
+        .player-btn {
+            background: #6c757d;
+        }
+        .player-btn:hover {
+            background: #545b62;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .pages-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .page-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+        }
+        .current-role {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔄 Role-Based Dropdown Menu Test</h1>
+    
+    <div class="test-container">
+        <h2>Current User Status</h2>
+        <div id="userStatus" class="current-role">Not Set</div>
+        
+        <h3>Set User Role for Testing</h3>
+        <div class="button-group">
+            <button class="test-btn admin-btn" onclick="setAdminRole()">🛠️ Set Admin Role</button>
+            <button class="test-btn player-btn" onclick="setPlayerRole()">👤 Set Player Role</button>
+            <button class="test-btn" onclick="clearUser()">🗑️ Clear User</button>
+        </div>
+        
+        <div class="info">
+            <strong>Expected Dropdown Behavior:</strong><br>
+            • <strong>Admin Users:</strong> See "Admin Dashboard, Player Dashboard, Play Game, Sign Out"<br>
+            • <strong>Player Users:</strong> See "Player Dashboard, Play Game, Sign Out" (Admin Dashboard hidden)
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Test Pages</h2>
+        <p>Click on each page to test the dropdown menu with your current role:</p>
+        
+        <div class="pages-list">
+            <div class="page-card">
+                <h4>🎮 Game Page</h4>
+                <a href="fifteen.html" target="_blank" class="test-btn">Open Game</a>
+            </div>
+            
+            <div class="page-card">
+                <h4>📋 Player Dashboard</h4>
+                <a href="dashboard.html" target="_blank" class="test-btn">Open Dashboard</a>
+            </div>
+            
+            <div class="page-card">
+                <h4>🛠️ Admin Dashboard</h4>
+                <a href="admin.html" target="_blank" class="test-btn admin-btn">Open Admin</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>✅ Test Checklist</h2>
+        <ul>
+            <li><strong>Admin Role Test:</strong>
+                <ul>
+                    <li>Set admin role using button above</li>
+                    <li>Visit each page and check dropdown menu</li>
+                    <li>Verify "Admin Dashboard" option is visible</li>
+                    <li>Test navigation between pages</li>
+                </ul>
+            </li>
+            <li><strong>Player Role Test:</strong>
+                <ul>
+                    <li>Set player role using button above</li>
+                    <li>Visit each page and check dropdown menu</li>
+                    <li>Verify "Admin Dashboard" option is hidden</li>
+                    <li>Test navigation between pages</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        function setAdminRole() {
+            const adminUser = {
+                username: 'AdminUser',
+                role: 'Administrator',
+                email: 'admin@example.com'
+            };
+            localStorage.setItem('fifteenPuzzleCurrentUser', JSON.stringify(adminUser));
+            updateUserStatus();
+        }
+
+        function setPlayerRole() {
+            const playerUser = {
+                username: 'PlayerUser',
+                role: 'Player',
+                email: 'player@example.com'
+            };
+            localStorage.setItem('fifteenPuzzleCurrentUser', JSON.stringify(playerUser));
+            updateUserStatus();
+        }
+
+        function clearUser() {
+            localStorage.removeItem('fifteenPuzzleCurrentUser');
+            updateUserStatus();
+        }
+
+        function updateUserStatus() {
+            const currentUser = localStorage.getItem('fifteenPuzzleCurrentUser');
+            const statusElement = document.getElementById('userStatus');
+            
+            if (currentUser) {
+                const user = JSON.parse(currentUser);
+                statusElement.textContent = `${user.username} (${user.role})`;
+                statusElement.style.color = user.role.toLowerCase() === 'administrator' ? '#28a745' : '#6c757d';
+            } else {
+                statusElement.textContent = 'No User Set';
+                statusElement.style.color = '#dc3545';
+            }
+        }
+
+        // Initialize status on page load
+        window.addEventListener('load', updateUserStatus);
+    </script>
+</body>
+</html>

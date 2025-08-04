@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fifteen Puzzle - CSC 4370</title>
+    <link rel="stylesheet" type="text/css" href="fifteen.css?v=20250803133000">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-brand">
+                <h1 class="brand-title">Fifteen Puzzle</h1>
+                <span class="brand-subtitle">CSC 4370 Database Systems</span>
+            </div>
+            
+            <!-- User Auth -->
+            <div class="header-actions">
+                <div id="guestPanel" class="auth-guest">
+                    <button id="loginButton" class="btn-text">Sign in</button>
+                    <button id="registerButton" class="btn-primary">Register</button>
+                </div>
+                
+                <div id="userPanel" class="auth-user" style="display: none;">
+                    <div class="user-menu">
+                        <button class="user-avatar" id="userMenuToggle">
+                            <span id="userInitials">U</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-info">
+                                <div class="user-name" id="userName">User</div>
+                                <div class="user-role" id="userRole">Player</div>
+                            </div>
+                            <button class="dropdown-item admin-only" id="adminDashboardItem">
+                                <span class="item-icon">�️</span>
+                                Admin Dashboard
+                            </button>
+                            <button class="dropdown-item" onclick="window.location.href='dashboard.html'">
+                                <span class="item-icon">📋</span>
+                                Player Dashboard
+                            </button>
+                            <button class="dropdown-item" onclick="window.location.href='fifteen.html'">
+                                <span class="item-icon">🎮</span>
+                                Play Game
+                            </button>
+                            <hr class="dropdown-divider">
+                            <button class="dropdown-item" id="logoutButton">
+                                <span class="item-icon">🚪</span>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">Solve the Classic Fifteen Puzzle</h1>
+                    <p class="hero-description">
+                        Arrange the numbered tiles in order by sliding them into the empty space.
+                        <br> 
+                        Track your progress and compete with others!
+                    </p>
+                    
+                    <!-- Game Instructions -->
+                    <div class="game-instructions">
+                        <p class="instruction-item">💡 Click any tile in the same row or column as the empty space to slide multiple tiles • 🎯 Arrange numbers 1-15 in order to win</p>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="stats-bar">
+                    <div class="stat">
+                        <div class="stat-value" id="timeDisplay">0:00</div>
+                        <div class="stat-label">Time</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="moveCount">0</div>
+                        <div class="stat-label">Moves</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="bestTime">--</div>
+                        <div class="stat-label">Best Time</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="bestMoves">--</div>
+                        <div class="stat-label">Best Moves</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Game Section -->
+            <section class="game-section">
+                <div class="game-layout">
+                    
+                    <!-- Controls Panel -->
+                    <aside class="controls-panel">
+                        <div class="control-group">
+                            <label class="control-label">Difficulty</label>
+                            <div class="size-selector">
+                                <input type="radio" id="size3" name="puzzleSize" value="3" class="size-input">
+                                <label for="size3" class="size-option">
+                                    <span class="size-number">3×3</span>
+                                    <span class="size-label">Easy</span>
+                                </label>
+                                
+                                <input type="radio" id="size4" name="puzzleSize" value="4" class="size-input" checked>
+                                <label for="size4" class="size-option">
+                                    <span class="size-number">4×4</span>
+                                    <span class="size-label">Classic</span>
+                                </label>
+                                
+                                <input type="radio" id="size5" name="puzzleSize" value="5" class="size-input">
+                                <label for="size5" class="size-option">
+                                    <span class="size-number">5×5</span>
+                                    <span class="size-label">Hard</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="backgroundSelect" class="control-label">Theme</label>
+                            <select id="backgroundSelect" class="control-select">
+                                <option value="resources/background1.png" selected>Nature Scene</option>
+                                <option value="resources/background2.png">City View</option>
+                                <option value="resources/background3.png">Abstract Art</option>
+                                <option value="resources/background4.png">Ocean Blue</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Audio</label>
+                            <div class="toggle-list">
+                                <button id="musicOffButton" class="btn-primary">Turn Music On</button>
+                                <label class="toggle-item">
+                                    <input type="checkbox" id="soundToggle" checked>
+                                    <span class="toggle-text">Sound effects</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-actions">
+                            <button id="startButton" class="btn-primary btn-large">
+                                New Game
+                            </button>
+                            <div class="action-row">
+                                <button id="shuffleButton" class="btn-secondary" disabled>Shuffle</button>
+                                <button id="resetButton" class="btn-secondary">Reset</button>
+                            </div>
+                            <button id="cheatButton" class="btn-outline" disabled>Auto-solve</button>
+                        </div>
+                        
+                        <!-- Game Status -->
+                        <div class="game-status">
+                            <div class="status-indicator" id="gameStatus">
+                                <div class="status-dot ready"></div>
+                                <span class="status-text">Ready to play</span>
+                            </div>
+                        </div>
+                    </aside>
+                    
+                    <!-- Puzzle Area -->
+                    <div class="puzzle-section">
+                        <div class="puzzle-container">
+                            <div id="puzzleArea" class="puzzle-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="winMessage" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-dialog celebration">
+            <div class="modal-content">
+                <div class="celebration-header">
+                    <div class="celebration-icon">🎉</div>
+                    <h2 class="celebration-title">Puzzle Complete!</h2>
+                    <p class="celebration-subtitle">Great job solving the puzzle</p>
+                </div>
+                
+                <div class="celebration-stats">
+                    <div class="completion-stat">
+                        <div class="stat-number" id="finalTime">0:00</div>
+                        <div class="stat-label">Final Time</div>
+                    </div>
+                    <div class="completion-stat">
+                        <div class="stat-number" id="finalMoves">0</div>
+                        <div class="stat-label">Total Moves</div>
+                    </div>
+                </div>
+                
+                <div id="newRecordMessage" class="achievement-badge" style="display: none;">
+                    <span class="badge-icon">🏆</span>
+                    <span class="badge-text">New Personal Best!</span>
+                </div>
+                
+                <div class="modal-actions">
+                    <button id="playAgainButton" class="btn-primary">Play Again</button>
+                    <button id="shareScoreButton" class="btn-text">Share Result</button>
+                </div>
+                
+                <button class="modal-close" id="closeWinMessage">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modals -->
+    <div id="loginModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content auth-modal">
+            <div class="auth-header">
+                <div class="auth-icon">🔐</div>
+                <h2 class="auth-title">Welcome Back</h2>
+                <p class="auth-subtitle">Sign in to track your progress and compete with others</p>
+            </div>
+            
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginUsername" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="loginUsername" name="username" class="form-input" 
+                               placeholder="Enter your username" required autocomplete="username">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="loginPassword" name="password" class="form-input" 
+                               placeholder="Enter your password" required autocomplete="current-password">
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-icon">🚀</span>
+                        Sign In
+                    </button>
+                </div>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? 
+                    <button type="button" id="showRegister" class="link-btn">Create one here</button>
+                </p>
+            </div>
+            
+            <div id="loginError" class="error-message hidden"></div>
+            <button id="closeLoginModal" class="modal-close">&times;</button>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content auth-modal">
+            <div class="auth-header">
+                <div class="auth-icon">✨</div>
+                <h2 class="auth-title">Join the Challenge</h2>
+                <p class="auth-subtitle">Create your account to start tracking statistics and climbing the leaderboard</p>
+            </div>
+            
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerUsername" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="registerUsername" name="username" class="form-input" 
+                               placeholder="Choose a username" required minlength="3" maxlength="20" autocomplete="username">
+                    </div>
+                    <small class="form-hint">3-20 characters, letters and numbers only</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail" class="form-label">Email</label>
+                    <div class="input-group">
+                        <span class="input-icon">📧</span>
+                        <input type="email" id="registerEmail" name="email" class="form-input" 
+                               placeholder="your@email.com" required autocomplete="email">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="registerPassword" name="password" class="form-input" 
+                               placeholder="Create a secure password" required minlength="6" autocomplete="new-password">
+                    </div>
+                    <small class="form-hint">Minimum 6 characters</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" 
+                               placeholder="Confirm your password" required autocomplete="new-password">
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-icon">✨</span>
+                        Create Account
+                    </button>
+                </div>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? 
+                    <button type="button" id="showLogin" class="link-btn">Sign in here</button>
+                </p>
+            </div>
+            
+            <div id="registerError" class="error-message hidden"></div>
+            <button id="closeRegisterModal" class="modal-close">&times;</button>
+        </div>
+    </div>
+
+    <!-- Statistics and Data Modals -->
+    <div id="statsModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content stats-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span class="modal-icon">📊</span>
+                    Your Statistics
+                </h2>
+                <button class="modal-close" id="closeStatsModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="stats-dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="stat-header">
+                                <span class="stat-icon">🎮</span>
+                                <span class="stat-title">Games Played</span>
+                            </div>
+                            <div class="stat-value" id="totalGames">0</div>
+                        </div>
+                        
+                        <div class="stat-card success">
+                            <div class="stat-header">
+                                <span class="stat-icon">🏆</span>
+                                <span class="stat-title">Games Won</span>
+                            </div>
+                            <div class="stat-value" id="gamesWon">0</div>
+                        </div>
+                        
+                        <div class="stat-card info">
+                            <div class="stat-header">
+                                <span class="stat-icon">📈</span>
+                                <span class="stat-title">Win Rate</span>
+                            </div>
+                            <div class="stat-value" id="winRate">0%</div>
+                        </div>
+                        
+                        <div class="stat-card warning">
+                            <div class="stat-header">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-title">Best Time</span>
+                            </div>
+                            <div class="stat-value" id="userBestTime">--</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <h3 class="section-title">Progress Overview</h3>
+                        <div class="progress-cards">
+                            <div class="progress-card">
+                                <span class="progress-label">Win Streak</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%" id="winStreakProgress"></div>
+                                </div>
+                                <span class="progress-value" id="winStreakValue">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="leaderboardModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content leaderboard-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span class="modal-icon">🏆</span>
+                    Global Leaderboard
+                </h2>
+                <button class="modal-close" id="closeLeaderboardModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="leaderboard-tabs">
+                    <button class="tab-btn active" data-tab="time">
+                        <span class="tab-icon">⚡</span>
+                        Best Times
+                    </button>
+                    <button class="tab-btn" data-tab="moves">
+                        <span class="tab-icon">🎯</span>
+                        Fewest Moves
+                    </button>
+                    <button class="tab-btn" data-tab="wins">
+                        <span class="tab-icon">🏆</span>
+                        Most Wins
+                    </button>
+                </div>
+                
+                <div class="leaderboard-content">
+                    <div id="leaderboardList" class="leaderboard-list">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <span>Loading leaderboard...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin and Settings Modals -->
+    <div id="adminModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span class="modal-icon">🛠️</span>
+                    Admin Dashboard
+                </h2>
+                <button class="modal-close" id="closeAdminModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="admin-sidebar">
+                    <div class="admin-nav">
+                        <button class="admin-nav-btn active" data-tab="users">
+                            <span class="nav-icon">👥</span>
+                            <span class="nav-text">Users</span>
+                        </button>
+                        <button class="admin-nav-btn" data-tab="stats">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-text">Statistics</span>
+                        </button>
+                        <button class="admin-nav-btn" data-tab="backgrounds">
+                            <span class="nav-icon">🖼️</span>
+                            <span class="nav-text">Backgrounds</span>
+                        </button>
+                        <button class="admin-nav-btn" data-tab="settings">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-text">Settings</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="admin-content">
+                    <div id="usersTab" class="admin-tab active">
+                        <div class="tab-header">
+                            <h3>User Management</h3>
+                            <button class="btn btn-primary btn-sm">Add User</button>
+                        </div>
+                        <div id="usersList" class="data-table">
+                            <div class="loading-state">Loading users...</div>
+                        </div>
+                    </div>
+                    
+                    <div id="statsTab" class="admin-tab">
+                        <div class="tab-header">
+                            <h3>System Statistics</h3>
+                        </div>
+                        <div id="globalStats" class="stats-overview">
+                            <div class="loading-state">Loading statistics...</div>
+                        </div>
+                    </div>
+                    
+                    <div id="backgroundsTab" class="admin-tab">
+                        <div class="tab-header">
+                            <h3>Background Management</h3>
+                            <button class="btn btn-primary btn-sm">Add Background</button>
+                        </div>
+                        <div id="backgroundsList" class="media-grid">
+                            <div class="loading-state">Loading backgrounds...</div>
+                        </div>
+                    </div>
+                    
+                    <div id="settingsTab" class="admin-tab">
+                        <div class="tab-header">
+                            <h3>System Settings</h3>
+                        </div>
+                        <div id="systemSettings" class="settings-panel">
+                            <div class="loading-state">Loading settings...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="preferencesModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content preferences-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span class="modal-icon">⚙️</span>
+                    User Preferences
+                </h2>
+                <button class="modal-close" id="closePreferencesModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="preferencesForm" class="preferences-form">
+                    <div class="preference-section">
+                        <h3 class="section-title">Game Defaults</h3>
+                        
+                        <div class="form-group">
+                            <label for="prefPuzzleSize" class="form-label">Default Puzzle Size</label>
+                            <select id="prefPuzzleSize" name="puzzle_size" class="form-select">
+                                <option value="3">3×3 (Easy)</option>
+                                <option value="4">4×4 (Classic)</option>
+                                <option value="5">5×5 (Hard)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prefBackground" class="form-label">Default Theme</label>
+                            <select id="prefBackground" name="background_image_id" class="form-select">
+                                <option value="1">🌲 Nature Escape</option>
+                                <option value="2">🏙️ Urban Vibes</option>
+                                <option value="3">🎨 Abstract Art</option>
+                                <option value="4">🌊 Ocean Calm</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-section">
+                        <h3 class="section-title">Audio Preferences</h3>
+                        
+                        <div class="preference-toggles">
+                            <label class="preference-toggle">
+                                <input type="checkbox" id="prefMusic" name="music_enabled">
+                                <span class="toggle-content">
+                                    <span class="toggle-icon">🎵</span>
+                                    <span class="toggle-text">Background Music</span>
+                                </span>
+                            </label>
+                            
+                            <label class="preference-toggle">
+                                <input type="checkbox" id="prefSounds" name="sound_effects_enabled">
+                                <span class="toggle-content">
+                                    <span class="toggle-icon">🔊</span>
+                                    <span class="toggle-text">Sound Effects</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-icon">💾</span>
+                            Save Preferences
+                        </button>
+                        <button type="button" id="cancelPreferences" class="btn btn-outline">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="gameMusic" loop preload="auto">
+        <source src="resources/game-music.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="moveSound" preload="auto">
+        <source src="resources/game-swipe.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="winSound" preload="auto">
+        <source src="resources/game-win.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <p class="footer-text">CSC 4370 - Database Systems | Milestone 3: Database Integration</p>
+                <p class="footer-subtitle">Advanced Fifteen Puzzle with User Management & Statistics</p>
+            </div>
+            <div class="footer-links">
+                <a href="http://validator.w3.org/check?uri=referer" target="_blank" class="validation-link">
+                    Valid HTML5
+                </a>
+                <a href="http://jigsaw.w3.org/css-validator/check/referer" target="_blank" class="validation-link">
+                    Valid CSS
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="fifteen.js"></script>
+</body>
+</html>

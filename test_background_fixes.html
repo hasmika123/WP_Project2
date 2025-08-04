@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Image Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .test-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Background Image & Error Fixes Test</h1>
+    
+    <div class="test-container">
+        <h2>🔧 Issues Fixed</h2>
+        <div class="status success">
+            ✅ <strong>Background Image Rendering:</strong> Fixed conflicting CSS properties in setTileBackground function
+        </div>
+        <div class="status success">
+            ✅ <strong>Leaderboard Errors:</strong> Added null checks for leaderboard elements
+        </div>
+        <div class="status success">
+            ✅ <strong>API Call Errors:</strong> Replaced server API calls with localStorage for user stats and preferences
+        </div>
+        <div class="status success">
+            ✅ <strong>Initialization Errors:</strong> Added conditional loading for optional features
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🎮 Test the Game</h2>
+        <p>Click the button below to test the game with background images:</p>
+        <button class="test-btn" onclick="openGame()">🎯 Open Fifteen Puzzle Game</button>
+        
+        <div class="info">
+            <h4>Test Instructions:</h4>
+            <ul>
+                <li>Open the game using the button above</li>
+                <li>Try changing the background image using the dropdown</li>
+                <li>Verify that the image appears correctly on the tiles</li>
+                <li>Check the browser console - there should be no errors</li>
+                <li>Test the dropdown navigation between pages</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🧪 Console Errors Check</h2>
+        <p>Open the browser's Developer Tools (F12) and check the Console tab.</p>
+        <div class="status info">
+            <strong>Expected Result:</strong> No more JavaScript errors related to:
+            <ul>
+                <li>Cannot read properties of null (reading 'value')</li>
+                <li>GET api.php 404 (Not Found)</li>
+                <li>Unexpected token 'F', "File not found"</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🎨 Background Image Fixes</h2>
+        <div class="status info">
+            <strong>What was fixed:</strong>
+            <ul>
+                <li><strong>Conflicting CSS Properties:</strong> The setTileBackground function was setting multiple conflicting background properties</li>
+                <li><strong>Proper Image Segmentation:</strong> Each tile now shows the correct portion of the background image</li>
+                <li><strong>Overlay for Visibility:</strong> Added proper semi-transparent overlay so numbers remain visible</li>
+                <li><strong>Default Background Handling:</strong> Properly handles cases where no background is selected</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function openGame() {
+            // Set a test user first
+            const testUser = {
+                username: 'TestUser',
+                role: 'Player',
+                email: 'test@example.com'
+            };
+            localStorage.setItem('fifteenPuzzleCurrentUser', JSON.stringify(testUser));
+            
+            // Open the game
+            window.open('fifteen.html', '_blank');
+        }
+
+        // Check current status
+        window.addEventListener('load', function() {
+            console.log('🔧 Background image and error fixes have been applied to fifteen.js');
+            console.log('📋 Key improvements:');
+            console.log('   - Fixed setTileBackground function for proper image rendering');
+            console.log('   - Added null checks for leaderboard elements');
+            console.log('   - Replaced API calls with localStorage for offline functionality');
+            console.log('   - Fixed initialization errors with conditional loading');
+        });
+    </script>
+</body>
+</html>
